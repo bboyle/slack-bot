@@ -20,6 +20,5 @@ module.exports = (robot) ->
     "#{res.message.user.name}"
 
   robot.hear /code\s+of\s+conduct/i, (res) ->
-    # http://www.michikono.com/2015/07/10/in-depth-tutorial-on-writing-a-slackbot/
     # send private message to user
     robot.messageRoom get_username(res), codeOfConduct
