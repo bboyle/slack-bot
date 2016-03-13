@@ -7,29 +7,27 @@ Praesent commodo ornare augue, ut porta leo semper quis. Praesent id rhoncus fel
 """
 
 
-
-
 module.exports = (robot) ->
 
+  # extract username from response
   # http://www.michikono.com/2015/07/10/in-depth-tutorial-on-writing-a-slackbot/
   get_username = (res) ->
     "#{res.message.user.name}"
 
-  robot.hear /\b(CoC|code\s+of\s+conduct)\b/i, (res) ->
-    # send private message to user
-    robot.messageRoom get_username(res), codeOfConduct
+  # share code of conduct with a user
+  share_code_conduct = (username) ->
+    robot.messageRoom username, codeOfConduct
 
-
-  enterReplies = ['Hi', 'Target Acquired', 'Firing', 'Hello friend.', 'Gotcha', 'I see you']
-  leaveReplies = ['Are you still there?', 'Target lost', 'Searching']
 
   # when a new user joins #general (i.e. joins slack team)
   # send them the code of conduct
   robot.enter (res) ->
-    console.dir res, {depth: 2}
-    if res.message.room == 'conduct'
-      robot.messageRoom get_username(res), codeOfConduct
-    res.send res.random enterReplies
+    if res.message.room == 'general'
+      share_code_conduct get_username(res)
 
-  robot.leave (res) ->
-    res.send res.random leaveReplies
+
+  # when a user mentions the code of conduct
+  # send it to them
+  robot.hear /\b(CoC|code\s+of\s+conduct)\b/i, (res) ->
+    # send private message to user
+    share_code_conduct get_username(res)
